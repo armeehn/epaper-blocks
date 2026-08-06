@@ -1,0 +1,29 @@
+name: Broken block
+description: A published block no longer works
+labels: ["bug"]
+body:
+  - type: input
+    id: block
+    attributes:
+      label: Which block?
+      placeholder: hackernews-top
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens on the panel?
+      placeholder: Shows "fetch failed" / blank / stale values since …
+    validations:
+      required: true
+  - type: input
+    id: fw
+    attributes:
+      label: Firmware version
+      description: Shown in the portal's Update tab.
+  - type: textarea
+    id: response
+    attributes:
+      label: Upstream response (optional)
+      description: Output of `curl -s '<the block's source.url with your params>' | head -c 2000`
+      render: shell

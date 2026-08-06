@@ -1,0 +1,14 @@
+{
+ "id": "quote-of-day",
+ "name": "Quote of the day",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "One quote per day, courtesy of ZenQuotes.io (no API key)",
+ "category": "fun",
+ "source": { "type": "json", "url": "https://zenquotes.io/api/today" },
+ "params": [],
+ "extract": [
+  { "name": "q", "path": "", "primary": "q", "secondary": "a", "limit": 1 } ],
+ "render": { "widget": "list", "title": "QUOTE OF THE DAY", "list": "q",
+  "minW": 8, "minH": 2 }
+}

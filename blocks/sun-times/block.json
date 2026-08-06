@@ -1,0 +1,19 @@
+{
+ "id": "sun-times",
+ "name": "Sunrise & sunset",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Local sunrise and sunset times via sunrise-sunset.org (no API key)",
+ "category": "environment",
+ "source": { "type": "json",
+  "url": "https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&tzid={tz}" },
+ "params": [
+  { "key": "lat", "label": "Latitude", "type": "string", "default": "34.05" },
+  { "key": "lon", "label": "Longitude", "type": "string", "default": "-118.24" },
+  { "key": "tz", "label": "Timezone (IANA)", "type": "string", "default": "America/Los_Angeles" } ],
+ "extract": [
+  { "name": "rise", "path": "results.sunrise" },
+  { "name": "set", "path": "results.sunset" } ],
+ "render": { "widget": "text", "title": "SUN TIMES",
+  "sub": "Rise {rise} - set {set}", "minW": 7, "minH": 2 }
+}

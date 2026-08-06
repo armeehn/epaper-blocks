@@ -1,0 +1,16 @@
+{
+ "id": "hackernews-top",
+ "name": "Hacker News",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Top front-page stories with points",
+ "category": "news",
+ "source": { "type": "json",
+  "url": "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage={count}" },
+ "params": [
+  { "key": "count", "label": "Stories shown", "type": "choice", "choices": "3,4,5", "default": "4" } ],
+ "extract": [
+  { "name": "stories", "path": "hits", "primary": "title", "secondary": "points", "limit": 5 } ],
+ "render": { "widget": "list", "title": "HACKER NEWS", "list": "stories",
+  "accent": true, "minW": 6, "minH": 3 }
+}

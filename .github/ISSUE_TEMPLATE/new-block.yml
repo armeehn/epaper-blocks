@@ -1,0 +1,35 @@
+name: Block request
+description: Suggest a block someone could contribute
+labels: ["block request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Blocks are declarative JSON with no secrets, so the API has to be
+        keyless (or take a non-secret identifier the user types in).
+  - type: input
+    id: what
+    attributes:
+      label: What should it show?
+      placeholder: Departure times for my local train stop
+    validations:
+      required: true
+  - type: input
+    id: api
+    attributes:
+      label: Which HTTPS API provides it?
+      placeholder: https://…
+    validations:
+      required: true
+  - type: dropdown
+    id: key
+    attributes:
+      label: Does that API require an API key or token?
+      options: ["No", "Yes", "Not sure"]
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Rate limits, terms of use, an example response, a sketch of the layout.

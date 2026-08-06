@@ -1,0 +1,18 @@
+{
+ "id": "air-quality",
+ "name": "Air quality",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "US AQI + PM2.5 from Open-Meteo (no API key)",
+ "category": "environment",
+ "source": { "type": "json",
+  "url": "https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,pm2_5" },
+ "params": [
+  { "key": "lat", "label": "Latitude", "type": "string", "default": "34.05" },
+  { "key": "lon", "label": "Longitude", "type": "string", "default": "-118.24" } ],
+ "extract": [
+  { "name": "aqi", "path": "current.us_aqi", "round": true },
+  { "name": "pm25", "path": "current.pm2_5", "round": true } ],
+ "render": { "widget": "big-number", "title": "AIR QUALITY", "value": "{aqi}",
+  "sub": "US AQI - PM2.5 {pm25} ug/m3", "accent": true, "minW": 5, "minH": 3 }
+}

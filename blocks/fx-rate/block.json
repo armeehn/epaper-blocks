@@ -1,0 +1,21 @@
+{
+ "id": "fx-rate",
+ "name": "FX rate",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Daily reference exchange rate via Frankfurter (ECB data, no API key)",
+ "category": "finance",
+ "source": { "type": "json",
+  "url": "https://api.frankfurter.app/latest?from={from}&to={to}" },
+ "params": [
+  { "key": "from", "label": "From", "type": "choice",
+    "choices": "USD,EUR,GBP,JPY,CHF,CAD,AUD,CNY", "default": "USD" },
+  { "key": "to", "label": "To", "type": "choice",
+    "choices": "USD,EUR,GBP,JPY,CHF,CAD,AUD,CNY", "default": "EUR" } ],
+ "extract": [
+  { "name": "rate", "path": "rates.{to}" },
+  { "name": "base", "path": "base" },
+  { "name": "date", "path": "date" } ],
+ "render": { "widget": "big-number", "title": "FX RATE", "value": "{rate}",
+  "sub": "1 {base} on {date}", "minW": 5, "minH": 3 }
+}

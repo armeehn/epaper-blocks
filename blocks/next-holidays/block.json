@@ -1,0 +1,17 @@
+{
+ "id": "next-holidays",
+ "name": "Upcoming holidays",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Next public holidays for your country via Nager.Date (no API key)",
+ "category": "calendar",
+ "source": { "type": "json",
+  "url": "https://date.nager.at/api/v3/NextPublicHolidays/{country}" },
+ "params": [
+  { "key": "country", "label": "Country", "type": "choice",
+    "choices": "US,CA,GB,DE,FR,ES,IT,NL,SE,NO,DK,FI,AU,NZ,AT,CH,BE,PT,IE,JP", "default": "US" } ],
+ "extract": [
+  { "name": "hols", "path": "", "primary": "name", "secondary": "date", "limit": 4 } ],
+ "render": { "widget": "list", "title": "UPCOMING HOLIDAYS", "list": "hols",
+  "minW": 7, "minH": 3 }
+}

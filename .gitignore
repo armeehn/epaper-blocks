@@ -1,0 +1,4 @@
+# private signing keys never belong in git, wherever keygen dropped them
+*.key
+__pycache__/
+.DS_Store

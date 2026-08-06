@@ -1,0 +1,19 @@
+{
+ "id": "uv-index",
+ "name": "UV index",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "UV index with exposure category from Open-Meteo (no API key)",
+ "category": "environment",
+ "source": { "type": "json",
+  "url": "https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=uv_index" },
+ "params": [
+  { "key": "lat", "label": "Latitude", "type": "string", "default": "34.05" },
+  { "key": "lon", "label": "Longitude", "type": "string", "default": "-118.24" } ],
+ "extract": [
+  { "name": "uv", "path": "current.uv_index", "round": true },
+  { "name": "uvcat", "path": "current.uv_index", "round": true,
+    "map": "0:Low,1:Low,2:Low,3:Moderate,4:Moderate,5:Moderate,6:High,7:High,8:Very high,9:Very high,10:Very high,def:Extreme" } ],
+ "render": { "widget": "big-number", "title": "UV INDEX", "value": "{uv}",
+  "sub": "Category: {uvcat}", "accent": true, "minW": 4, "minH": 3 }
+}

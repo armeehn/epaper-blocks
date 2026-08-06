@@ -1,0 +1,17 @@
+{
+ "id": "stock-price",
+ "name": "Stock price",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Last price + previous close from Yahoo Finance (unofficial, no key)",
+ "category": "finance",
+ "source": { "type": "json",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=1d" },
+ "params": [
+  { "key": "symbol", "label": "Ticker (^GSPC = S&P500)", "type": "string", "default": "AAPL" } ],
+ "extract": [
+  { "name": "price", "path": "chart.result[0].meta.regularMarketPrice" },
+  { "name": "prev", "path": "chart.result[0].meta.chartPreviousClose" } ],
+ "render": { "widget": "big-number", "title": "STOCK PRICE", "value": "{price}",
+  "sub": "USD - prev close {prev}", "minW": 5, "minH": 3 }
+}

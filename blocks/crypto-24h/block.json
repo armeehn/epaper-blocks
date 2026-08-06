@@ -1,0 +1,18 @@
+{
+ "id": "crypto-24h",
+ "name": "Crypto + 24h change",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Spot price in USD with 24h change via CoinGecko (no API key)",
+ "category": "finance",
+ "source": { "type": "json",
+  "url": "https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd&include_24hr_change=true" },
+ "params": [
+  { "key": "coin", "label": "Coin", "type": "choice",
+    "choices": "bitcoin,ethereum,solana,dogecoin,cardano,monero", "default": "bitcoin" } ],
+ "extract": [
+  { "name": "price", "path": "{coin}.usd", "round": true },
+  { "name": "chg", "path": "{coin}.usd_24h_change", "suffix": "%" } ],
+ "render": { "widget": "big-number", "title": "CRYPTO (USD)", "value": "{price}",
+  "sub": "24h change {chg}", "accent": true, "minW": 5, "minH": 3 }
+}

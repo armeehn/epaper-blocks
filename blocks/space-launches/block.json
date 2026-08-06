@@ -1,0 +1,17 @@
+{
+ "id": "space-launches",
+ "name": "Space launches",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Upcoming rocket launches via Launch Library 2 (no API key)",
+ "category": "news",
+ "source": { "type": "json",
+  "url": "https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit={count}&mode=list" },
+ "params": [
+  { "key": "count", "label": "Launches shown", "type": "choice",
+    "choices": "2,3,4", "default": "3" } ],
+ "extract": [
+  { "name": "ln", "path": "results", "primary": "name", "secondary": "status.abbrev", "limit": 4 } ],
+ "render": { "widget": "list", "title": "UPCOMING LAUNCHES", "list": "ln",
+  "minW": 8, "minH": 3 }
+}

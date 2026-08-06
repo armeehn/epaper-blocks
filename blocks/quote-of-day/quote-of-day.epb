@@ -1,0 +1,11 @@
+{
+ "format": "epb1",
+ "payload": "ewogImlkIjogInF1b3RlLW9mLWRheSIsCiAibmFtZSI6ICJRdW90ZSBvZiB0aGUgZGF5IiwKICJhdXRob3IiOiAiZXBhcGVyLWJsb2NrcyBjb250cmlidXRvcnMiLAogInZlcnNpb24iOiAiMS4wIiwKICJkZXNjcmlwdGlvbiI6ICJPbmUgcXVvdGUgcGVyIGRheSwgY291cnRlc3kgb2YgWmVuUXVvdGVzLmlvIChubyBBUEkga2V5KSIsCiAiY2F0ZWdvcnkiOiAiZnVuIiwKICJzb3VyY2UiOiB7ICJ0eXBlIjogImpzb24iLCAidXJsIjogImh0dHBzOi8vemVucXVvdGVzLmlvL2FwaS90b2RheSIgfSwKICJwYXJhbXMiOiBbXSwKICJleHRyYWN0IjogWwogIHsgIm5hbWUiOiAicSIsICJwYXRoIjogIiIsICJwcmltYXJ5IjogInEiLCAic2Vjb25kYXJ5IjogImEiLCAibGltaXQiOiAxIH0gXSwKICJyZW5kZXIiOiB7ICJ3aWRnZXQiOiAibGlzdCIsICJ0aXRsZSI6ICJRVU9URSBPRiBUSEUgREFZIiwgImxpc3QiOiAicSIsCiAgIm1pblciOiA4LCAibWluSCI6IDIgfQp9Cg==",
+ "sigs": [
+  {
+   "keyid": "epaper-blocks-2026",
+   "alg": "ecdsa-p256-sha256",
+   "sig": "MEYCIQDS391/zMrFXBmNmkdRV2kza3EcmO9RLL3qaz2+uZ3hEQIhAMZIjtkLkTbDkzs2UypqC99taePdKYqjr0hEEkMcDkg3"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "github-stars",
+ "name": "GitHub stars",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Stars + open issues for any public repository",
+ "category": "developer",
+ "source": { "type": "json", "url": "https://api.github.com/repos/{repo}" },
+ "params": [
+  { "key": "repo", "label": "owner/repo", "type": "string", "default": "ZinggJM/GxEPD2" } ],
+ "extract": [
+  { "name": "stars", "path": "stargazers_count", "round": true },
+  { "name": "issues", "path": "open_issues_count", "round": true } ],
+ "render": { "widget": "big-number", "title": "GITHUB STARS", "value": "{stars}",
+  "sub": "{issues} open issues", "minW": 5, "minH": 3 }
+}

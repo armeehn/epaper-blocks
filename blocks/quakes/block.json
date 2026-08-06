@@ -1,0 +1,17 @@
+{
+ "id": "quakes",
+ "name": "Earthquakes",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Recent notable earthquakes from the USGS feed (no API key)",
+ "category": "news",
+ "source": { "type": "json",
+  "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/{feed}.geojson" },
+ "params": [
+  { "key": "feed", "label": "Feed", "type": "choice",
+    "choices": "significant_week,m6_week,m4.5_day", "default": "significant_week" } ],
+ "extract": [
+  { "name": "eq", "path": "features", "primary": "properties.title", "limit": 4 } ],
+ "render": { "widget": "list", "title": "EARTHQUAKES", "list": "eq",
+  "accent": true, "minW": 8, "minH": 3 }
+}

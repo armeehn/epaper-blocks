@@ -1,0 +1,17 @@
+{
+ "id": "crypto-price",
+ "name": "Crypto price",
+ "author": "epaper-blocks contributors",
+ "version": "1.0",
+ "description": "Spot price in USD via CoinGecko (no API key)",
+ "category": "finance",
+ "source": { "type": "json",
+  "url": "https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd" },
+ "params": [
+  { "key": "coin", "label": "Coin", "type": "choice",
+    "choices": "bitcoin,ethereum,dogecoin,monero", "default": "bitcoin" } ],
+ "extract": [
+  { "name": "price", "path": "{coin}.usd", "round": true, "prefix": "$" } ],
+ "render": { "widget": "big-number", "title": "CRYPTO (USD)", "value": "{price}",
+  "sub": "CoinGecko spot price", "minW": 5, "minH": 3 }
+}
