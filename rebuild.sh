@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 # Re-sign every block and regenerate the signed index.json.
 #
-#   ./rebuild.sh                               # demo key, URLs derived from origin
+#   ./rebuild.sh                               # registry key, URLs from origin
 #   ./rebuild.sh my-registry.key my-keyid      # your key, URLs derived from origin
 #   ./rebuild.sh my-registry.key my-keyid https://example.org/blocks
+#
+# The default keyid MUST stay the one the firmware trusts
+# (firmware/epaper_dashboard/trusted_keys.h). A device looks a signature up by
+# keyid before it verifies anything, so signing with a keyid no device knows
+# produces a registry that verifies perfectly here and is rejected everywhere.
 #
 # The base URL must point at the directory that CONTAINS the block folders;
 # each entry is published as <baseurl>/<id>/<id>.epb.
@@ -16,8 +21,8 @@ set -euo pipefail
 INVOKED_FROM=$PWD
 cd "$(dirname "$0")"
 
-KEY=${1:-keys/demo-registry.key}
-KEYID=${2:-demo-registry-2026}
+KEY=${1:-keys/epaper-blocks.key}
+KEYID=${2:-epaper-blocks-2026}
 
 case "$KEY" in
   /*) ;;
@@ -42,6 +47,8 @@ test -f "$KEY" || {
   echo "no such key: ${1:-$KEY}" >&2
   echo "  looked in $INVOKED_FROM and $PWD" >&2
   echo "  (block_sign.py keygen writes the key into the directory you ran it from)" >&2
+  echo "  The registry's own private key is held offline and is in no clone —" >&2
+  echo "  put it at $PWD/keys/epaper-blocks.key to republish, or pass your own." >&2
   exit 1
 }
 

@@ -12,40 +12,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install --quiet cryptography
+      - run: pip install --quiet cryptography pytest
 
+      # The command CONTRIBUTING.md tells contributors to run before opening a
+      # PR. Kept as its own step so a descriptor error is the first thing red.
       - name: Validate every block descriptor
         run: python3 tools/validate_blocks.py
 
-      # Published .epb files and the index must actually verify against the
-      # public key they claim, or devices reject the whole registry.
-      - name: Verify published signatures
-        run: |
-          set -e
-          pub=keys/demo-registry.pub.pem
-          for f in blocks/*/*.epb index.json; do
-            python3 tools/block_sign.py verify "$pub" "$f"
-          done
-
-      # An .epb must carry exactly the block.json next to it — otherwise the
-      # reviewed source and the shipped artefact have drifted apart.
-      - name: Signed payload matches block.json
-        run: |
-          python3 - <<'PY'
-          import base64, json, pathlib, sys
-          bad = 0
-          for d in sorted(pathlib.Path("blocks").iterdir()):
-              epb = json.loads((d / f"{d.name}.epb").read_text())
-              payload = base64.b64decode(epb["payload"])
-              if payload != (d / "block.json").read_bytes():
-                  print(f"error: {d.name}.epb payload differs from block.json — re-run ./rebuild.sh")
-                  bad = 1
-          sys.exit(bad)
-          PY
-
-      # Devices fetch the index with a 24 KB cap.
-      - name: Index fits the device fetch cap
-        run: |
-          size=$(stat -c%s index.json)
-          echo "index.json is $size bytes"
-          test "$size" -le 24576
+      # Everything a device checks that a descriptor review cannot: that each
+      # published .epb is the reviewed block.json, that its signature verifies
+      # against keys/epaper-blocks.pub.pem, that it carries the keyid stock
+      # firmware looks it up by, that index.json is current and fits the
+      # portal's 24 KB fetch cap, and that no private key was committed.
+      #
+      # This replaces three hand-rolled shell steps, one of which verified
+      # against keys/demo-registry.pub.pem -- a file that is not in this
+      # repository, so the signature check crashed instead of checking.
+      - name: Registry seam tests
+        run: pytest -q

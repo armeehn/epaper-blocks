@@ -17,8 +17,14 @@
    python3 tools/validate_blocks.py
    ```
 
-   CI runs the same validator on every PR, plus a signature check over every
-   published `.epb` and the index.
+   CI runs the same validator on every PR, plus `pytest`, which re-verifies
+   every published `.epb` and the index against `keys/epaper-blocks.pub.pem`,
+   checks each envelope carries the keyid stock firmware trusts, and checks
+   `index.json` is current and inside the portal's 24 KB fetch cap:
+
+   ```sh
+   pip install cryptography pytest && pytest -q
+   ```
 
 You do not sign anything. On merge a maintainer re-signs with the registry key
 and regenerates `index.json` (`./rebuild.sh`).

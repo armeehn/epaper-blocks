@@ -29,16 +29,23 @@ development.
 - **Show something false** — yes. Signing is not taste; registry review is the
   curation layer, and the panel shows data, never actions.
 
-## The demo key
+## The registry key
 
-`keys/demo-registry.key` is a **demo key whose private half is public**, kept so
-the examples install out of the box on an unmodified build. It is not a trust
-anchor: anyone can sign a block a stock device accepts until it is replaced.
+This registry signs with keyid **`epaper-blocks-2026`**; the public half is
+published as `keys/epaper-blocks.pub.pem` and is the trust anchor compiled into
+stock firmware (`firmware/epaper_dashboard/trusted_keys.h`). The private half is
+held offline by the maintainer and is in no clone of this repository, so nobody
+else can produce a `.epb` that an unmodified device accepts.
 
-Anyone running a real registry must generate their own key, keep the private
-half offline, ship only the public half in the firmware's `trusted_keys.h`, and
-delete the demo entry. `.gitignore` excludes `*.key` apart from that one
-documented file.
+The keyid is part of the contract, not a label. A device looks a signature up by
+keyid *before* it verifies anything, so a registry signed with a key that is
+cryptographically fine but carries an unrecognised keyid is rejected wholesale —
+which is why `rebuild.sh` defaults to the published keyid and CI asserts it.
+
+Anyone running a real registry must mint their own key
+(`python3 tools/block_sign.py keygen my-registry`), keep the private half
+offline, ship only the public half in the firmware's `trusted_keys.h`, and
+remove the entry above. `.gitignore` excludes `*.key`, with no exception.
 
 ## Reporting a vulnerability
 
