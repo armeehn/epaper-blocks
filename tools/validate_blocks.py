@@ -23,7 +23,11 @@ PRIVATE_HOST = re.compile(
 # Field-length caps from BlockDef in firmware/epaper_dashboard/blocks.h. A
 # longer value is silently truncated on the device, which is worse than a
 # rejected PR.
-CAPS = {"id": 27, "name": 31, "author": 27, "version": 9, "url": 199,
+# blocks.cpp idOk() REJECTS an id longer than MAX_ID outright (the install
+# fails, nothing is truncated), one below the 27 chars char id[28] could hold.
+# It is therefore checked separately and is deliberately absent from CAPS.
+MAX_ID = 26
+CAPS = {"name": 31, "author": 27, "version": 9, "url": 199,
         "title": 27, "label": 27, "value": 19, "sub": 39, "list": 15,
         "param.key": 15, "param.label": 27, "param.default": 39, "param.choices": 95,
         "extract.name": 15, "extract.path": 63, "extract.prefix": 7,
@@ -60,7 +64,10 @@ def check(block_dir: pathlib.Path, err):
         err(f"{f}: id '{b['id']}' must equal the directory name '{block_dir.name}'")
     if b.get("category") not in CATEGORIES:
         err(f"{f}: category '{b.get('category')}' not one of {sorted(CATEGORIES)}")
-    for k in ("id", "name", "author", "version"):
+    if len(b["id"]) > MAX_ID:
+        err(f"{f}: id is {len(b['id'])} chars; the device refuses any id longer "
+            f"than {MAX_ID} (blocks.cpp idOk)")
+    for k in ("name", "author", "version"):
         cap(k, b.get(k))
     if not (block_dir / "README.md").exists():
         err(f"{block_dir}: add a README.md (what it shows, upstream API, terms)")
@@ -75,13 +82,28 @@ def check(block_dir: pathlib.Path, err):
         err(f"{f}: source.url must be https:// (got '{parts.scheme or 'none'}')")
     if PRIVATE_HOST.match(parts.hostname or ""):
         err(f"{f}: source.url host '{parts.hostname}' is private/loopback/.local")
-    # Placeholders must resolve to declared params, and vice versa.
-    used = set(re.findall(r"\{([a-zA-Z0-9_]+)\}", url))
+    # fsstore.cpp blockInstall() refuses a descriptor that puts a placeholder
+    # in the URL host: the SSRF guard can only judge a host after substitution,
+    # so a parameterised one is rejected at install time rather than trusted.
+    authority = url.split("://", 1)[1].split("/", 1)[0] if "://" in url else ""
+    if "{" in authority:
+        err(f"{f}: source.url must not put a {{param}} in the host "
+            f"('{authority}') — the device refuses to install it")
+    # Placeholders must resolve to declared params, and vice versa. The device
+    # substitutes params into extract paths as well as the URL (blocks.cpp
+    # blockFetch), so a typo there is just as broken -- and silent: the value
+    # renders as "--" with no error anywhere.
+    used_url = set(re.findall(r"\{([a-zA-Z0-9_]+)\}", url))
+    used_path = set()
+    for x in b.get("extract", []):
+        used_path |= set(re.findall(r"\{([a-zA-Z0-9_]+)\}", str(x.get("path") or "")))
     declared = {p.get("key") for p in b.get("params", [])}
-    for u in used - declared:
+    for u in used_url - declared:
         err(f"{f}: url uses {{{u}}} with no matching param")
-    for d in declared - used:
-        err(f"{f}: param '{d}' is never used in the url")
+    for u in used_path - declared:
+        err(f"{f}: an extract path uses {{{u}}} with no matching param")
+    for d in declared - (used_url | used_path):
+        err(f"{f}: param '{d}' is never used in the url or an extract path")
 
     params = b.get("params", [])
     if len(params) > MAX_PARAMS:
@@ -108,6 +130,9 @@ def check(block_dir: pathlib.Path, err):
         if not x.get("path") and not x.get("primary"):
             err(f"{f}: extract '{x.get('name')}' needs a 'path' "
                 f"(empty path is only valid for a list over the response root)")
+        if x.get("name") in names:
+            err(f"{f}: duplicate extract name '{x.get('name')}' — render "
+                f"bindings resolve to the first one and the second is dead")
         names.add(x.get("name"))
         if x.get("limit", 0) > MAX_ROWS:
             err(f"{f}: extract '{x.get('name')}' limit {x['limit']} > {MAX_ROWS} rows shown")
@@ -119,9 +144,19 @@ def check(block_dir: pathlib.Path, err):
         err(f"{f}: render.widget must be one of {sorted(WIDGETS)}")
     for k in ("title", "label", "value", "sub", "list"):
         cap(k, r.get(k))
+    # Only an extract carrying 'primary' produces rows (blocks.cpp
+    # blockApplyExtract); anything else fills values[], which BW_LIST never
+    # reads. Both halves of that pairing are silent failures on the device.
+    row_names = {x.get("name") for x in extracts if x.get("primary")}
     if r.get("widget") == "list":
         if r.get("list") not in names:
             err(f"{f}: render.list '{r.get('list')}' is not an extract name")
+        elif r.get("list") not in row_names:
+            err(f"{f}: render.list '{r.get('list')}' names a scalar extract; a "
+                f"list widget needs an extract with 'primary'")
+    elif row_names:
+        err(f"{f}: extract(s) {sorted(row_names)} produce list rows, but "
+            f"widget '{r.get('widget')}' never draws them")
     if r.get("widget") in ("big-number", "bar") and not r.get("value"):
         err(f"{f}: widget '{r['widget']}' needs render.value")
     # Every {binding} in value/sub/label must name an extract.

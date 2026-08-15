@@ -29,7 +29,7 @@ format can grow without breaking older firmware. The whole descriptor must be
 
 | Field | Required | Notes |
 | --- | --- | --- |
-| `id` | yes | short lowercase-kebab; **must equal the directory name** |
+| `id` | yes | short lowercase-kebab, **≤ 26 characters**; must equal the directory name |
 | `name` | yes | shown in the store and layout editor |
 | `author` | yes | free text |
 | `version` | yes | string, e.g. `"1.0"` |
@@ -45,6 +45,10 @@ format can grow without breaking older firmware. The whole descriptor must be
 
 The URL is fetched once per wake cycle with a 10 s timeout, and the response is
 capped at **16 KB**. Placeholders are URL-encoded on substitution.
+
+Placeholders may appear only in the **path or query string**. A `{param}` in the
+host is refused at install time: the device can only judge a host after
+substitution, so a parameterised one is never trusted.
 
 The device refuses any URL that is not `https://`, or that names a literal
 private/loopback/link-local address or a `.local` host.
@@ -72,8 +76,8 @@ order: `mult` → `round` → `map` → `prefix`/`suffix`.
 
 | Field | Notes |
 | --- | --- |
-| `name` | binding name used by `render` |
-| `path` | dotted path, `a.b[2].c` or `a.b.2.c` |
+| `name` | binding name used by `render`; must be unique within the block |
+| `path` | dotted path, `a.b[2].c` or `a.b.2.c`; may contain `{param}` placeholders |
 | `mult` | multiply (number) |
 | `round` | round to integer |
 | `map` | `"0:Clear,1:Cloudy"` value→label table |
@@ -82,6 +86,10 @@ order: `mult` → `round` → `map` → `prefix`/`suffix`.
 | `limit` | rows kept (device shows at most 6) |
 
 For `text` sources the whole body is bound to the first extract's `name`.
+
+Only an extract with `primary` produces rows, and only the `list` widget draws
+them. A `list` widget pointing at a scalar extract, or list rows under any other
+widget, draws nothing at all — so both are rejected by the validator.
 
 ## `render`
 
@@ -97,9 +105,9 @@ For `text` sources the whole body is bound to the first extract's `name`.
 | `accent` | `true` draws in red on 3-colour panels (black on b/w) |
 | `minW`, `minH` | minimum grid cells (grid is 16 × 12) |
 
-Widget vocabulary is fixed. `clock`, `datestatus`, `weather`, `forecast`,
-`calendar` and `inbox` are native built-ins and cannot be declared by a
-contributed block.
+Widget vocabulary is fixed. `clock`, `date-status`, `weather-now`, `forecast`,
+`calendar` and `inbox` are native built-ins (`source.type: "builtin"`) and
+cannot be declared by a contributed block.
 
 ## Distribution envelope
 

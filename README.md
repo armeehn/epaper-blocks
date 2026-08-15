@@ -52,6 +52,10 @@ checklist, and [BLOCK_SPEC.md](BLOCK_SPEC.md) for the field reference. In short:
 add `blocks/<id>/block.json` plus a README, run `python3 tools/validate_blocks.py`,
 and open a PR. On merge a maintainer re-signs and republishes the index.
 
+CI additionally runs `pytest`, which re-verifies every published `.epb` and the
+index against `keys/epaper-blocks.pub.pem` and checks that what the registry
+publishes is what a device will accept.
+
 ## Run your own registry
 
 Everything here is reproducible with your own key:
@@ -60,6 +64,10 @@ Everything here is reproducible with your own key:
 python3 tools/block_sign.py keygen my-registry     # keep my-registry.key offline
 ./rebuild.sh my-registry.key my-registry-2026 https://you.example/blocks
 ```
+
+The keyid you pass is not decoration: a device matches it against
+`trusted_keys.h` before it checks the signature, so it has to be the same string
+in both places.
 
 To make a device trust it, add `my-registry.pub.pem` to
 `firmware/epaper_dashboard/trusted_keys.h` in the firmware repository and

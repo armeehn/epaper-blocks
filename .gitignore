@@ -1,4 +1,6 @@
-# private signing keys never belong in git, wherever keygen dropped them
+# Private signing keys never belong in git, wherever keygen dropped them.
+# There is no exception: the registry key's private half is held offline
+# and only keys/epaper-blocks.pub.pem is published here.
 *.key
 __pycache__/
 .DS_Store
